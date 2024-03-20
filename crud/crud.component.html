@@ -1,0 +1,228 @@
+<!-- actions -->
+<div class="surface-card py-4">
+  <p-toolbar>
+    <div class="p-toolbar-group-start">
+      <p-button
+        [label]="'app.actions.refresh' | translate"
+        icon="pi pi-refresh"
+        class="mr-2"
+        styleClass="p-button-success"
+        [loading]="loadingState.list"
+        (onClick)="refresh()"
+      ></p-button>
+      <p-button
+        [label]="'app.actions.create' | translate"
+        icon="pi pi-plus"
+        class="mr-2"
+        [loading]="loadingState.create"
+        (onClick)="itemDialog = true"
+        *ngIf="actions && hasAction('create')"
+        [disabled]="isDisabled('create')"
+      ></p-button>
+      <!-- <p-button
+        [label]="'app.actions.delete' | translate"
+        icon="pi pi-trash"
+        styleClass="p-button-danger"
+        [loading]="loadingState.delete"
+        [disabled]="!selected"
+      ></p-button> -->
+    </div>
+    <!-- <div class="p-toolbar-group-end">
+      <p-button
+        icon="pi pi-upload"
+        [label]="'app.actions.export' | translate"
+        class="mr-2"
+      ></p-button>
+    </div> -->
+  </p-toolbar>
+</div>
+
+<!-- datalist -->
+<div class="surface-card py-4 mb-3" *ngIf="data$ | async as dataResponseType">
+  <p-table
+    #dt1
+    [value]="dataResponseType.data"
+    [dataKey]="dataPrimaryKeyFieldName"
+    [loading]="loadingState.list"
+    [globalFilterFields]="gridConfig.globalFilterFields ?? []"
+    [styleClass]="setGridSize(gridConfig.gridSize)"
+    [(selection)]="selected"
+    [selectionMode]="gridConfig.selectionMode"
+    (selectionChange)="selectionChange.emit($event)"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <div>
+          <div class="font-medium text-3xl text-900 mb-3" *ngIf="title">
+            {{ title }}
+          </div>
+          <div class="text-500" *ngIf="description">
+            {{ description }}
+          </div>
+        </div>
+
+        <span class="p-input-icon-left ml-auto">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="onGlobalFilter(dt1, $event)"
+            [placeholder]="'app.datagrid.search-keyword' | translate"
+          />
+        </span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th
+          [pSortableColumn]="column.label"
+          style="min-width: 15rem"
+          *ngFor="let column of gridColumns"
+        >
+          {{ column.title }}
+          <p-sortIcon [field]="column.label"></p-sortIcon>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr [pSelectableRow]="item">
+        <td *ngFor="let column of gridColumns">
+          {{
+            !column.transform
+              ? getProperty(item, column.label)
+              : column.transform(getProperty(item, column.label))
+          }}
+        </td>
+        <td>
+          <div class="flex">
+            <button
+              pButton
+              pRipple
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-success mr-2"
+              (click)="editItem(item)"
+              *ngIf="actions && hasAction('update')"
+              [disabled]="isDisabled('update')"
+            ></button>
+            <button
+              pButton
+              pRipple
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-danger"
+              (click)="deleteItem(item)"
+              *ngIf="actions && hasAction('delete')"
+              [disabled]="isDisabled('delete')"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="gridColumns.length">
+          {{
+            "app.datagrid.emptymessage"
+              | translate : { itemLabel: gridConfig.totalItemLabel }
+          }}
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <p-paginator
+        (onPageChange)="onPageChange($event)"
+        [rows]="queryParams.pageSize"
+        [totalRecords]="dataResponseType.total"
+        [rowsPerPageOptions]="[10, 20, 30]"
+      ></p-paginator>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- delete dialog -->
+<p-dialog
+  header="Confirm"
+  [(visible)]="deleteItemDialog"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+>
+  <div class="flex align-items-center justify-content-center">
+    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+    <span *ngIf="selected"> {{ "app.prompt.delete" | translate }}</span>
+  </div>
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      class="p-button-text"
+      [label]="'app.actions.cancel' | translate"
+      (click)="deleteItemDialog = false"
+    ></button>
+    <button
+      pButton
+      pRipple
+      class="p-button-text"
+      [label]="'app.actions.delete' | translate"
+      [loading]="loadingState.delete"
+      (click)="confirmDelete()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<!-- form dialog -->
+<p-dialog
+  [(visible)]="itemDialog"
+  [style]="{ width: '550px' }"
+  [modal]="true"
+  [maximizable]="true"
+  [resizable]="true"
+  (onHide)="onItemDialogHide()"
+  header="Item details"
+  class="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <ng-container *ngIf="form$ | async as vm">
+      <ngx-smart-form
+        #form
+        [form]="vm"
+        [submitable]="false"
+        [autoSubmit]="false"
+        [autofocus]="false"
+        (submit)="saveItem($event)"
+        (ready)="onFormReadyState($event)"
+        [template]="controlTemplate"
+      >
+        <div [class]="'formgrid grid'">
+          <ng-template
+            #controlTemplate
+            let-config="value"
+            let-control="control"
+          >
+            <ngx-prime-form-control
+              [control]="control"
+              [inputconfig]="config"
+            ></ngx-prime-form-control>
+          </ng-template>
+        </div>
+      </ngx-smart-form>
+    </ng-container>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      [label]="'app.actions.cancel' | translate"
+      class="p-button-text"
+      (click)="hideDialog()"
+    ></button>
+    <button
+      pButton
+      pRipple
+      [label]="'app.actions.save' | translate"
+      class="p-button-text"
+      (click)="saveItem()"
+      [loading]="!!selected ? loadingState.update : loadingState.create"
+    ></button>
+  </ng-template>
+</p-dialog>
