@@ -8,9 +8,9 @@ import {
   OnInit,
   Output,
   ViewChild,
-} from '@angular/core';
-import { CrudService } from './services/crud.service';
-import { Subject, takeUntil, tap } from 'rxjs';
+} from "@angular/core";
+import { CrudService } from "./services/crud.service";
+import { Subject, takeUntil, tap } from "rxjs";
 import {
   CrudActionType,
   CrudHook,
@@ -18,20 +18,20 @@ import {
   GridColumnType,
   GridConfigType,
   QueryParamsType,
-} from './type';
-import { Table } from 'primeng/table';
-import * as _ from 'lodash';
+} from "./type";
+import { Table } from "primeng/table";
+import * as _ from "lodash";
 import {
   FORM_CLIENT,
   FormsClient,
   ReactiveFormComponentInterface,
-} from '@azlabsjs/ngx-smart-form';
-import { ScopeService } from './services/scope.service';
+} from "@azlabsjs/ngx-smart-form";
+import { ScopeService } from "./services/scope.service";
 
 @Component({
-  selector: 'prime-crud',
-  templateUrl: './crud.component.html',
-  styleUrls: ['./crud.component.css'],
+  selector: "prime-crud",
+  templateUrl: "./crud.component.html",
+  styleUrls: ["./crud.component.css"],
   providers: [CrudService],
 })
 export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
@@ -39,9 +39,9 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
 
   // datagrid sizes
   public sizes: any[] = [
-    { name: 'sm', class: 'p-datatable-sm' },
-    { name: 'md', class: '' },
-    { name: 'lg', class: 'p-datatable-lg' },
+    { name: "sm", class: "p-datatable-sm" },
+    { name: "md", class: "" },
+    { name: "lg", class: "p-datatable-lg" },
   ];
 
   // edit & delete dialogs
@@ -54,7 +54,7 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   // CRUD element config
-  @Input() dataPrimaryKeyFieldName: string = 'id';
+  @Input() dataPrimaryKeyFieldName: string = "id";
 
   // loading state
   public loadingState!: CrudLoadingState;
@@ -71,9 +71,9 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
     page: 1,
     pageSize: 10,
     pageSizeOption: [10, 20, 30],
-    totalItemLabel: 'items',
-    gridSize: 'sm',
-    selectionMode: 'single',
+    totalItemLabel: "items",
+    gridSize: "sm",
+    selectionMode: "single",
   };
 
   // form config
@@ -86,7 +86,7 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   private _queryParams: QueryParamsType = {
     page: 1,
     pageSize: 10,
-    _query: { order: [['createdAt', 'ASC']] },
+    _query: { order: [["createdAt", "ASC"]] },
   };
   public get queryParams() {
     return this._queryParams;
@@ -99,19 +99,19 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   // actions config
   @Input() public actions?: CrudActionType[] = [
     {
-      name: 'create',
+      name: "create",
       scopes: [],
     },
     {
-      name: 'read',
+      name: "read",
       scopes: [],
     },
     {
-      name: 'update',
+      name: "update",
       scopes: [],
     },
     {
-      name: 'delete',
+      name: "delete",
       scopes: [],
     },
   ];
@@ -131,7 +131,7 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
 
   // form details
   public form$ = this.formsClient.get(this.formId);
-  @ViewChild('form', { static: false })
+  @ViewChild("form", { static: false })
   formvalue!: ReactiveFormComponentInterface;
 
   constructor(
@@ -179,7 +179,7 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   onGlobalFilter(table: Table, event: any) {
     return table.filterGlobal(
       event?.target?.value ?? event?.value ?? event,
-      'contains'
+      "contains"
     );
   }
 
@@ -282,11 +282,15 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   isDisabled(actionName: string) {
-    return this.scopes.some((scope) =>
-      this.getAction(actionName)?.scopes.includes(scope)
-    )
-      ? false
-      : true;
+    const action = this.getAction(actionName);
+
+    return action && action?.scopes?.length > 0
+      ? this.scopes.some((scope) =>
+          this.getAction(actionName)?.scopes.includes(scope)
+        )
+        ? false
+        : true
+      : false;
   }
 
   confirmDelete() {
