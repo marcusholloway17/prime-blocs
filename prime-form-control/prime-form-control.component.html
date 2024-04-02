@@ -232,5 +232,8 @@
         </ng-container>
       </ng-container>
     </ng-container>
+    <small *ngIf="inputconfig.description" [id]="inputconfig.name">{{
+      inputconfig.description
+    }}</small>
   </div>
 </div>
