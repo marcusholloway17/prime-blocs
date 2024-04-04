@@ -26,16 +26,16 @@
           <div class="p-toolbar-group-start">
             <p-button
               [label]="'app.actions.refresh' | translate"
+              styleClass="p-button-sm p-button-text"
               icon="pi pi-sync"
               class="mr-2"
-              styleClass="p-button-sm"
               [loading]="loadingState.list"
               (onClick)="refresh()"
             ></p-button>
             <p-button
               [label]="'app.actions.create' | translate"
               icon="pi pi-plus"
-              styleClass="p-button-sm"
+              styleClass="p-button-sm p-button-text"
               class="mr-2"
               [loading]="loadingState.create"
               (onClick)="itemDialog = true"
@@ -87,14 +87,14 @@
           <div class="flex">
             <p-button
               icon="pi pi-pencil"
-              styleClass="p-button-rounded mr-2"
+              styleClass="p-button-rounded p-button-sm p-button-text mr-2"
               (click)="editItem(item)"
               *ngIf="actions && hasAction('update')"
               [disabled]="isDisabled('update')"
             ></p-button>
             <p-button
               icon="pi pi-trash"
-              styleClass="p-button-rounded p-button-sm p-button-danger"
+              styleClass="p-button-rounded p-button-sm p-button-danger p-button-text"
               (click)="deleteItem(item)"
               *ngIf="actions && hasAction('delete')"
               [disabled]="isDisabled('delete')"
