@@ -62,5 +62,7 @@ export type CrudActionType = {
 };
 
 export type CrudHook = {
-  beforeEdit?: (item: any) => any;
+  beforeCreate: (item: any) => any;
+  beforeEdit: (item: any) => any;
+  beforeSubmit: (item: any) => any;
 };

@@ -117,7 +117,11 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   ];
 
   // hooks handler
-  @Input() public hooks!: CrudHook;
+  @Input() public hooks: CrudHook = {
+    beforeEdit: (item) => item,
+    beforeCreate: (arg) => arg,
+    beforeSubmit: (item) => item,
+  };
 
   // scopes handler
   public scopes = this.scopeService.getScopes();
@@ -241,7 +245,7 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
     //   item = this.hooks.beforeEdit(item);
     // }
     setTimeout(() => {
-      this.formvalue?.setValue(item);
+      this.formvalue?.setValue(this.hooks.beforeEdit(item));
     }, 100);
   }
   onItemDialogHide() {

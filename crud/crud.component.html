@@ -159,12 +159,15 @@
   [(visible)]="itemDialog"
   [style]="{ width: '550px' }"
   [modal]="true"
+  [dismissableMask]="true"
   [maximizable]="true"
-  [resizable]="true"
   (onHide)="onItemDialogHide()"
-  header="Details"
   class="p-fluid"
 >
+  <ng-template pTemplate="header">
+    <h3>{{ gridConfig.totalItemLabel }}</h3>
+  </ng-template>
+
   <ng-template pTemplate="content">
     <ng-container *ngIf="form$ | async as vm">
       <ngx-smart-form
@@ -194,20 +197,22 @@
   </ng-template>
 
   <ng-template pTemplate="footer">
-    <button
-      pButton
-      pRipple
-      [label]="'app.actions.cancel' | translate"
-      class="p-button-text"
-      (click)="hideDialog()"
-    ></button>
-    <button
-      pButton
-      pRipple
-      [label]="'app.actions.save' | translate"
-      class="p-button-text"
-      (click)="saveItem()"
-      [loading]="!!selected ? loadingState.update : loadingState.create"
-    ></button>
+    <div class="flex justify-content-end">
+      <button
+        pButton
+        pRipple
+        [label]="'app.actions.cancel' | translate"
+        class="p-button-text p-button-danger"
+        (click)="hideDialog()"
+      ></button>
+      <button
+        pButton
+        pRipple
+        [label]="'app.actions.save' | translate"
+        class="p-button-text"
+        (click)="saveItem()"
+        [loading]="!!selected ? loadingState.update : loadingState.create"
+      ></button>
+    </div>
   </ng-template>
 </p-dialog>
