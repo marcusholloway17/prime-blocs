@@ -1,44 +1,5 @@
-<!-- actions -->
-<div class="surface-card py-4">
-  <p-toolbar>
-    <div class="p-toolbar-group-start">
-      <p-button
-        [label]="'app.actions.refresh' | translate"
-        icon="pi pi-refresh"
-        class="mr-2"
-        styleClass="p-button-success"
-        [loading]="loadingState.list"
-        (onClick)="refresh()"
-      ></p-button>
-      <p-button
-        [label]="'app.actions.create' | translate"
-        icon="pi pi-plus"
-        class="mr-2"
-        [loading]="loadingState.create"
-        (onClick)="itemDialog = true"
-        *ngIf="actions && hasAction('create')"
-        [disabled]="isDisabled('create')"
-      ></p-button>
-      <!-- <p-button
-        [label]="'app.actions.delete' | translate"
-        icon="pi pi-trash"
-        styleClass="p-button-danger"
-        [loading]="loadingState.delete"
-        [disabled]="!selected"
-      ></p-button> -->
-    </div>
-    <!-- <div class="p-toolbar-group-end">
-      <p-button
-        icon="pi pi-upload"
-        [label]="'app.actions.export' | translate"
-        class="mr-2"
-      ></p-button>
-    </div> -->
-  </p-toolbar>
-</div>
-
 <!-- datalist -->
-<div class="surface-card py-4 mb-3" *ngIf="data$ | async as dataResponseType">
+<div class="surface-card mb-3 py-2" *ngIf="data$ | async as dataResponseType">
   <p-table
     #dt1
     [value]="dataResponseType.data"
@@ -53,7 +14,7 @@
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
         <div>
-          <div class="font-medium text-3xl text-900 mb-3" *ngIf="title">
+          <div class="text-3xl text-900 mb-3" *ngIf="title">
             {{ title }}
           </div>
           <div class="text-500" *ngIf="description">
@@ -61,15 +22,43 @@
           </div>
         </div>
 
-        <span class="p-input-icon-left ml-auto">
-          <i class="pi pi-search"></i>
-          <input
-            pInputText
-            type="text"
-            (input)="onGlobalFilter(dt1, $event)"
-            [placeholder]="'app.datagrid.search-keyword' | translate"
-          />
-        </span>
+        <div class="flex">
+          <div class="p-toolbar-group-start">
+            <p-button
+              [label]="'app.actions.refresh' | translate"
+              icon="pi pi-sync"
+              class="mr-2"
+              styleClass="p-button-sm"
+              [loading]="loadingState.list"
+              (onClick)="refresh()"
+            ></p-button>
+            <p-button
+              [label]="'app.actions.create' | translate"
+              icon="pi pi-plus"
+              styleClass="p-button-sm"
+              class="mr-2"
+              [loading]="loadingState.create"
+              (onClick)="itemDialog = true"
+              *ngIf="actions && hasAction('create')"
+              [disabled]="isDisabled('create')"
+            ></p-button>
+          </div>
+          <div
+            class="p-input-icon-right ml-auto"
+            *ngIf="
+              gridConfig.globalFilter && gridConfig.globalFilterFields?.length
+            "
+          >
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              (input)="onGlobalFilter(dt1, $event)"
+              [placeholder]="'app.datagrid.search-keyword' | translate"
+              class="p-inputtext-sm"
+            />
+          </div>
+        </div>
       </div>
     </ng-template>
     <ng-template pTemplate="header">
@@ -96,24 +85,20 @@
         </td>
         <td>
           <div class="flex">
-            <button
-              pButton
-              pRipple
+            <p-button
               icon="pi pi-pencil"
-              class="p-button-rounded p-button-success mr-2"
+              styleClass="p-button-rounded mr-2"
               (click)="editItem(item)"
               *ngIf="actions && hasAction('update')"
               [disabled]="isDisabled('update')"
-            ></button>
-            <button
-              pButton
-              pRipple
+            ></p-button>
+            <p-button
               icon="pi pi-trash"
-              class="p-button-rounded p-button-danger"
+              styleClass="p-button-rounded p-button-sm p-button-danger"
               (click)="deleteItem(item)"
               *ngIf="actions && hasAction('delete')"
               [disabled]="isDisabled('delete')"
-            ></button>
+            ></p-button>
           </div>
         </td>
       </tr>
@@ -133,7 +118,7 @@
         (onPageChange)="onPageChange($event)"
         [rows]="queryParams.pageSize"
         [totalRecords]="dataResponseType.total"
-        [rowsPerPageOptions]="[10, 20, 30]"
+        [rowsPerPageOptions]="gridConfig.pageSizeOption"
       ></p-paginator>
     </ng-template>
   </p-table>
@@ -177,7 +162,7 @@
   [maximizable]="true"
   [resizable]="true"
   (onHide)="onItemDialogHide()"
-  header="Item details"
+  header="Details"
   class="p-fluid"
 >
   <ng-template pTemplate="content">

@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, switchMap, tap, throwError } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, catchError, switchMap, tap, throwError } from "rxjs";
 import {
   CrudLoadingState,
   DataResponseType,
   QueryParamsType,
   badRequestErrorType,
-} from '../type';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { MessageService } from 'primeng/api';
-import { LanguageService } from 'src/app/helpers/language.service';
+} from "../type";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { MessageService } from "primeng/api";
+import { LanguageService } from "src/app/helpers/language.service";
 
 @Injectable()
 export class CrudService {
@@ -16,7 +16,7 @@ export class CrudService {
 
   // query
   public queryParams: QueryParamsType = {
-    _query: { order: [['createdAt', 'DESC']] },
+    _query: { order: [["createdAt", "DESC"]] },
     page: 1,
     pageSize: 10,
   };
@@ -54,8 +54,8 @@ export class CrudService {
       tap(() => {
         this.setLoadingState({ create: false });
         this.messageService.add({
-          severity: 'success',
-          detail: this.languageService.instant('app.strings.request-ok'),
+          severity: "success",
+          detail: this.languageService.instant("app.strings.request-ok"),
         });
       }),
       switchMap(() => this.list(this.queryParams))
@@ -88,13 +88,13 @@ export class CrudService {
   }
 
   // one
-  public one(
+  public one<T>(
     id: string | number,
     queryParams: QueryParamsType = this.queryParams
   ) {
     // this.setLoadingState({ list: true });
     return this.httpClient
-      .get(this.url + id, {
+      .get<T>(this.url + id, {
         params: { _query: JSON.stringify(queryParams._query) },
       })
       .pipe(
@@ -117,8 +117,8 @@ export class CrudService {
       tap(() => {
         this.setLoadingState({ update: false });
         this.messageService.add({
-          severity: 'success',
-          detail: this.languageService.instant('app.strings.request-ok'),
+          severity: "success",
+          detail: this.languageService.instant("app.strings.request-ok"),
         });
       }),
       switchMap(() => this.list(this.queryParams))
@@ -136,8 +136,8 @@ export class CrudService {
       tap(() => {
         this.setLoadingState({ delete: false });
         this.messageService.add({
-          severity: 'success',
-          detail: this.languageService.instant('app.strings.request-ok'),
+          severity: "success",
+          detail: this.languageService.instant("app.strings.request-ok"),
         });
       }),
       switchMap(() => this.list(this.queryParams))
@@ -170,16 +170,16 @@ export class CrudService {
   // handle errors
   private handleError(err: HttpErrorResponse) {
     const _error = err.error;
-    if (typeof _error == 'string') {
+    if (typeof _error == "string") {
       this.messageService.add({
-        severity: 'error',
+        severity: "error",
         detail: _error,
       });
     } else if (Array.isArray(_error?.errors) && _error?.errors?.length) {
       this.messageService.addAll(
         _error?.errors?.map((err: badRequestErrorType) => {
           return {
-            severity: 'warn',
+            severity: "warn",
             detail: err?.msg,
             summary: err?.params,
           };
@@ -187,8 +187,8 @@ export class CrudService {
       );
     } else {
       this.messageService.add({
-        severity: 'error',
-        detail: this.languageService.instant('app.strings.request-error'),
+        severity: "error",
+        detail: this.languageService.instant("app.strings.request-error"),
       });
     }
     return throwError(() => err);

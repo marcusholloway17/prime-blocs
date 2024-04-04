@@ -1,4 +1,4 @@
-import { Pipe } from '@angular/core';
+import { Pipe } from "@angular/core";
 
 export type DataResponseType = {
   total: number;
@@ -17,6 +17,8 @@ export type GridColumnType = {
   label: string;
   transform?: (value: any) => string | Pipe | string;
   type?: string;
+  filterable?: boolean;
+  sortable?: boolean;
 };
 
 export type GridConfigType = {
@@ -24,10 +26,11 @@ export type GridConfigType = {
   pageSize: number;
   pageSizeOption: any[];
   totalItemLabel: string;
-  selectionMode: 'single' | 'multiple';
+  selectionMode: "single" | "multiple";
   sortable?: boolean;
   checkboxSelection?: boolean;
   radioButtonSelection?: boolean;
+  globalFilter?: boolean;
   globalFilterFields?: string[];
   gridSize: string;
 };
