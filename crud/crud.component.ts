@@ -1,5 +1,6 @@
 import {
   AfterContentInit,
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Inject,
@@ -33,6 +34,7 @@ import { ScopeService } from "./services/scope.service";
   templateUrl: "./crud.component.html",
   styleUrls: ["./crud.component.css"],
   providers: [CrudService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -129,6 +131,10 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   // events emitters
   @Output() lazyLoad: EventEmitter<any> = new EventEmitter<any>();
   @Output() selectionChange: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onList: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onCreate: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onUpdate: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onDelete: EventEmitter<any> = new EventEmitter<any>();
 
   // selections
   public selected: any;
@@ -199,7 +205,10 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   refresh() {
     this.crudService
       .list(this.queryParams)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        tap((response) => this.onList.emit(response))
+      )
       .subscribe();
   }
 
@@ -210,11 +219,15 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   saveItem(value: any = this.formvalue?.formGroup?.getRawValue()) {
     if (this.selected) {
       this.crudService
-        .update(this.selected[this.dataPrimaryKeyFieldName], value)
+        .update(
+          this.selected[this.dataPrimaryKeyFieldName],
+          this.hooks.beforeSubmit(value)
+        )
         .pipe(
           takeUntil(this.destroy$),
           tap((result) => {
             if (result) {
+              this.onUpdate.emit(value);
               this.selected = undefined;
               this.formvalue?.reset();
             }
@@ -223,11 +236,12 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
         .subscribe();
     } else {
       this.crudService
-        .create(value)
+        .create(this.hooks.beforeSubmit(value))
         .pipe(
           takeUntil(this.destroy$),
           tap((result) => {
             if (result) {
+              this.onCreate.emit(value);
               this.selected = undefined;
               this.formvalue?.reset();
             }
@@ -303,6 +317,7 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
       .pipe(
         takeUntil(this.destroy$),
         tap((response) => {
+          this.onDelete.emit(this.selected[this.dataPrimaryKeyFieldName]);
           this.selected = undefined;
           this.deleteItemDialog = false;
         })

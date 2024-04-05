@@ -91,36 +91,66 @@
         >
           <ng-container
             *ngIf="
-              ''
-                | request : selectInputConfig.optionsConfig?.source?.raw ?? ''
-                | withLoading
-                | async as optionsData
+              !!selectInputConfig.optionsConfig?.source?.raw?.includes('http');
+              else selectElseTemplate
             "
           >
-            <p-dropdown
-              [formControl]="control"
-              [options]="optionsData?.value?.data ?? []"
-              [optionLabel]="
-                selectInputConfig.optionsConfig?.params?.valueBy ?? ''
+            <ng-container
+              *ngIf="
+                ''
+                  | request : selectInputConfig.optionsConfig?.source?.raw ?? ''
+                  | withLoading
+                  | async as optionsData
               "
-              [optionValue]="
-                selectInputConfig.optionsConfig?.params?.keyBy ?? ''
-              "
-              [filter]="true"
-              [filterBy]="
-                selectInputConfig.optionsConfig?.params?.valueBy || ''
-              "
-              appendTo="body"
             >
-              <ng-template pTemplate="dropdownicon">
-                <i
-                  *ngIf="optionsData?.loading"
-                  class="pi pi-spin pi-spinner"
-                  style="font-size: 2rem"
-                ></i>
-              </ng-template>
-            </p-dropdown>
+              <p-dropdown
+                [formControl]="control"
+                [options]="optionsData?.value?.data ?? []"
+                [optionLabel]="
+                  selectInputConfig.optionsConfig?.params?.valueBy ?? ''
+                "
+                [optionValue]="
+                  selectInputConfig.optionsConfig?.params?.keyBy ?? ''
+                "
+                [filter]="true"
+                [filterBy]="
+                  selectInputConfig.optionsConfig?.params?.valueBy || ''
+                "
+                appendTo="body"
+              >
+                <ng-template pTemplate="dropdownicon">
+                  <i
+                    *ngIf="optionsData?.loading"
+                    class="pi pi-spin pi-spinner"
+                    style="font-size: 2rem"
+                  ></i>
+                </ng-template>
+              </p-dropdown>
+            </ng-container>
           </ng-container>
+          <ng-template #selectElseTemplate>
+            <div
+              *ngIf="inputType.asSelectInput(inputconfig) as selectInputConfig"
+            >
+              <p-dropdown
+                *ngIf="selectInputConfig.optionsConfig"
+                [formControl]="control"
+                [options]="
+                  mapSelectionResource(selectInputConfig.optionsConfig)
+                "
+                [optionLabel]="'value'"
+                [optionValue]="'key'"
+                [filter]="true"
+                [filterBy]="'value'"
+                appendTo="body"
+              >
+              </p-dropdown>
+            </div>
+            <!-- <pre>
+            {{ selectInputConfig | json }}
+          </pre
+            > -->
+          </ng-template>
         </ng-container>
       </ng-container>
 
