@@ -1,0 +1,65 @@
+<div class="surface-card" *ngIf="data$ | async as dataResponseType">
+  <p-table
+    #dt1
+    [columns]="gridColumns"
+    [value]="dataResponseType.data"
+    [dataKey]="gridConfig.dataKey ?? ''"
+    [loading]="loadingState.list"
+    [globalFilterFields]="gridConfig.globalFilterFields ?? []"
+    [styleClass]="setGridSize(gridConfig.gridSize)"
+    [(selection)]="selected"
+    [selectionMode]="gridConfig.selectionMode?.toString() ?? ''"
+    (selectionChange)="selectionChange.emit($event)"
+    [tableStyle]="{ 'min-width': '50rem' }"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-end">
+        <span class="p-input-icon-left ml-auto">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="onGlobalFilter(dt1, $event)"
+            [placeholder]="'app.datagrid.search-keyword' | translate"
+          />
+        </span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns">
+          {{ col?.title }}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item let-columns="columns">
+      <tr [pSelectableRow]="item">
+        <td *ngFor="let col of columns">
+          {{
+            !col.transform
+              ? getProperty(item, col.label)
+              : col.transform(getProperty(item, col.label))
+          }}
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="gridColumns.length">
+          {{
+            "app.datagrid.emptymessage"
+              | translate : { itemLabel: gridConfig.totalItemLabel }
+          }}
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <p-paginator
+        (onPageChange)="onPageChange($event)"
+        [rows]="queryParams.pageSize"
+        [totalRecords]="dataResponseType.total"
+        [rowsPerPageOptions]="[10, 20, 30]"
+      ></p-paginator>
+    </ng-template>
+  </p-table>
+</div>
