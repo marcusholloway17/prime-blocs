@@ -8,6 +8,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  TemplateRef,
   ViewChild,
 } from "@angular/core";
 import { CrudService } from "./services/crud.service";
@@ -143,6 +144,10 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   public form$ = this.formsClient.get(this.formId);
   @ViewChild("form", { static: false })
   formvalue!: ReactiveFormComponentInterface;
+
+  // template input area
+  @Input() actionBarTemplate!: TemplateRef<unknown>;
+  @Input() rowActionsBarTemplate!: TemplateRef<unknown>;
 
   constructor(
     private crudService: CrudService,

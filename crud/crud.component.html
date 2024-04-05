@@ -24,6 +24,7 @@
 
         <div class="flex">
           <div class="p-toolbar-group-start">
+            <ng-content select="actionBarStart"></ng-content>
             <p-button
               [label]="'app.actions.refresh' | translate"
               styleClass="p-button-sm p-button-text"
@@ -42,6 +43,14 @@
               *ngIf="actions && hasAction('create')"
               [disabled]="isDisabled('create')"
             ></p-button>
+            <ng-content select="actionBarEnd"></ng-content>
+            <ng-container
+              *ngTemplateOutlet="
+                actionBarTemplate;
+                context: { $implicit: selected }
+              "
+            >
+            </ng-container>
           </div>
           <div
             class="p-input-icon-right ml-auto"
@@ -99,6 +108,13 @@
               *ngIf="actions && hasAction('delete')"
               [disabled]="isDisabled('delete')"
             ></p-button>
+            <ng-container
+              *ngTemplateOutlet="
+                rowActionsBarTemplate;
+                context: { $implicit: item }
+              "
+            >
+            </ng-container>
           </div>
         </td>
       </tr>
