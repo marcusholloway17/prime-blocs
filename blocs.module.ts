@@ -27,6 +27,8 @@ import { InputMaskModule } from "primeng/inputmask";
 import { DropdownModule } from "primeng/dropdown";
 import { SidebarModule } from "primeng/sidebar";
 import { DividerModule } from "primeng/divider";
+import { TooltipModule } from "primeng/tooltip";
+import { ConfirmPopupModule } from "primeng/confirmpopup";
 
 @NgModule({
   declarations: [
@@ -61,6 +63,8 @@ import { DividerModule } from "primeng/divider";
     DropdownModule,
     SidebarModule,
     DividerModule,
+    TooltipModule,
+    ConfirmPopupModule,
   ],
   exports: [
     LoaderComponent,

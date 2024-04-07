@@ -100,6 +100,8 @@
               (click)="editItem(item)"
               *ngIf="actions && hasAction('update')"
               [disabled]="isDisabled('update')"
+              [pTooltip]="'app.actions.edit' | translate"
+              tooltipPosition="bottom"
             ></p-button>
             <p-button
               icon="pi pi-trash"
@@ -107,6 +109,8 @@
               (click)="deleteItem(item)"
               *ngIf="actions && hasAction('delete')"
               [disabled]="isDisabled('delete')"
+              [pTooltip]="'app.actions.delete' | translate"
+              tooltipPosition="bottom"
             ></p-button>
             <ng-container
               *ngTemplateOutlet="
@@ -142,7 +146,7 @@
 
 <!-- delete dialog -->
 <p-dialog
-  header="Confirm"
+  [header]="'app.actions.confirm' | translate"
   [(visible)]="deleteItemDialog"
   [modal]="true"
   [style]="{ width: '450px' }"
@@ -162,7 +166,7 @@
     <button
       pButton
       pRipple
-      class="p-button-text"
+      class="p-button-text p-button-danger"
       [label]="'app.actions.delete' | translate"
       [loading]="loadingState.delete"
       (click)="confirmDelete()"
