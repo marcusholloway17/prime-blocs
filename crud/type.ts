@@ -33,6 +33,7 @@ export type GridConfigType = {
   globalFilter?: boolean;
   globalFilterFields?: string[];
   gridSize: string;
+  selectable?: boolean;
 };
 
 export type _QueryParamsType = {
