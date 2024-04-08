@@ -30,10 +30,14 @@
         <th *ngFor="let col of columns">
           {{ col?.title }}
         </th>
+        <th *ngIf="gridConfig.hasRowActions">Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item let-columns="columns">
-      <tr [pSelectableRow]="item">
+      <tr
+        *ngIf="gridConfig.selectable; else unSelectableRowTemplate"
+        [pSelectableRow]="item"
+      >
         <td *ngFor="let col of columns">
           {{
             !col.transform
@@ -41,7 +45,33 @@
               : col.transform(getProperty(item, col.label))
           }}
         </td>
+        <td *ngIf="gridConfig.hasRowActions">
+          <ng-container
+            *ngTemplateOutlet="rowActionsTemplate; context: { $implicit: item }"
+          >
+          </ng-container>
+        </td>
       </tr>
+      <ng-template #unSelectableRowTemplate>
+        <tr>
+          <td *ngFor="let col of columns">
+            {{
+              !col.transform
+                ? getProperty(item, col.label)
+                : col.transform(getProperty(item, col.label))
+            }}
+          </td>
+          <td *ngIf="gridConfig.hasRowActions">
+            <ng-container
+              *ngTemplateOutlet="
+                rowActionsTemplate;
+                context: { $implicit: item }
+              "
+            >
+            </ng-container>
+          </td>
+        </tr>
+      </ng-template>
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>

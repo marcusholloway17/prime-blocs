@@ -6,7 +6,8 @@ import {
   OnDestroy,
   OnInit,
   Output,
-} from '@angular/core';
+  TemplateRef,
+} from "@angular/core";
 import {
   DATA_TABLE_CONFIG_PROVIDER,
   DataTableConfig,
@@ -15,16 +16,16 @@ import {
   GridColumnType,
   GridConfigType,
   QueryParamsType,
-} from '../../types';
-import { Subject, takeUntil, tap } from 'rxjs';
-import { DataFetcherService } from '../../services/data-fetcher.service';
-import * as _ from 'lodash';
-import { Table } from 'primeng/table';
+} from "../../types";
+import { Subject, takeUntil, tap } from "rxjs";
+import { DataFetcherService } from "../../services/data-fetcher.service";
+import * as _ from "lodash";
+import { Table } from "primeng/table";
 
 @Component({
-  selector: 'prime-data-table-basic',
-  templateUrl: './data-table-basic.component.html',
-  styleUrls: ['./data-table-basic.component.css'],
+  selector: "prime-data-table-basic",
+  templateUrl: "./data-table-basic.component.html",
+  styleUrls: ["./data-table-basic.component.css"],
   providers: [DataFetcherService],
 })
 export class DataTableBasicComponent implements OnInit, OnDestroy {
@@ -59,7 +60,7 @@ export class DataTableBasicComponent implements OnInit, OnDestroy {
     page: this.dataTableConfig.page ?? 1,
     pageSize: this.dataTableConfig.pageSize ?? 10,
     pageSizeOptions: this.dataTableConfig.pageSizeOptions ?? [10, 50, 100],
-    totalItemLabel: this.dataTableConfig.totalItemLabel ?? 'items',
+    totalItemLabel: this.dataTableConfig.totalItemLabel ?? "items",
     gridSize: this.dataTableConfig.tableSize ?? DataTableSizes.md,
     selectionMode:
       this.dataTableConfig.selectionMode ?? DataTableSelectionMode.single,
@@ -75,10 +76,14 @@ export class DataTableBasicComponent implements OnInit, OnDestroy {
 
   // datagrid sizes
   public sizes: any[] = [
-    { name: 'sm', class: 'p-datatable-sm' },
-    { name: 'md', class: '' },
-    { name: 'lg', class: 'p-datatable-lg' },
+    { name: "sm", class: "p-datatable-sm" },
+    { name: "md", class: "" },
+    { name: "lg", class: "p-datatable-lg" },
   ];
+
+  // templates input
+  @Input() rowActionsTemplate!: TemplateRef<unknown>;
+  @Input() ActionBarTemplate!: TemplateRef<unknown>;
 
   constructor(
     @Inject(DATA_TABLE_CONFIG_PROVIDER)
@@ -114,7 +119,7 @@ export class DataTableBasicComponent implements OnInit, OnDestroy {
   }
 
   setGridSize(
-    size: string | DataTableSizes = this.dataTableConfig.tableSize ?? 'md'
+    size: string | DataTableSizes = this.dataTableConfig.tableSize ?? "md"
   ) {
     return (
       this.sizes.find((s) => s?.name == size)?.class ?? this.sizes[0]?.class
@@ -128,7 +133,7 @@ export class DataTableBasicComponent implements OnInit, OnDestroy {
   onGlobalFilter(table: Table, event: any) {
     return table.filterGlobal(
       event?.target?.value ?? event?.value ?? event,
-      'contains'
+      "contains"
     );
   }
 
