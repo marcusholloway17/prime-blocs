@@ -166,6 +166,32 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
       .pipe(takeUntil(this.destroy$));
   }
 
+  onFilter(event: any) {
+    // TODO: make a request with filtered value & fields
+    // this.onPageChange({
+    //   page: this.queryParams.page - 1,
+    //   rows: event?.filters?.golbal?.value?.length
+    //     ? this.gridConfig.pageSizeOption[-1]
+    //     : this.gridConfig.pageSizeOption[0],
+    // });
+    // await lastValueFrom(
+    //   of(event).pipe(
+    //     take(1),
+    //     takeUntil(this.destroy$),
+    //     debounceTime(500),
+    //     distinctUntilChanged(),
+    //     switchMap((event) =>
+    //       this.crudService.list({
+    //         ...this.queryParams,
+    //         pageSize: event?.filters?.golbal?.value?.length
+    //           ? this.gridConfig.pageSizeOption[-1]
+    //           : this.gridConfig.pageSizeOption[0],
+    //       })
+    //     )
+    //   )
+    // );
+  }
+
   getProperty(object: any, property: string) {
     return _.get(object, property);
   }

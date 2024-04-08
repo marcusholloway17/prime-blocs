@@ -10,6 +10,7 @@
     [(selection)]="selected"
     [selectionMode]="gridConfig.selectionMode"
     (selectionChange)="selectionChange.emit($event)"
+    (onFilter)="onFilter($event)"
   >
     <ng-template pTemplate="caption">
       <div class="flex align-items-center justify-content-between">
@@ -80,7 +81,7 @@
           {{ column.title }}
           <p-sortIcon [field]="column.label"></p-sortIcon>
         </th>
-        <th></th>
+        <th>Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item>
