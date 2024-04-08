@@ -117,6 +117,7 @@
                   selectInputConfig.optionsConfig?.params?.valueBy || ''
                 "
                 appendTo="body"
+                [autoDisplayFirst]="false"
               >
                 <ng-template pTemplate="dropdownicon">
                   <i
@@ -142,6 +143,7 @@
                 [optionValue]="'key'"
                 [filter]="true"
                 [filterBy]="'value'"
+                [autoDisplayFirst]="false"
                 appendTo="body"
               >
               </p-dropdown>
