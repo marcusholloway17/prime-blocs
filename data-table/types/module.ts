@@ -1,14 +1,14 @@
-import { InjectionToken, Pipe } from '@angular/core';
+import { InjectionToken, Pipe } from "@angular/core";
 
 export enum DataTableSizes {
-  'sm',
-  'md',
-  'lg',
+  "sm",
+  "md",
+  "lg",
 }
 
 export enum DataTableSelectionMode {
-  'single',
-  'multiple',
+  "single",
+  "multiple",
 }
 
 export type DataTableConfig = {
@@ -46,6 +46,8 @@ export type GridConfigType = {
   globalFilterFields?: string[];
   gridSize: DataTableSizes | string;
   dataKey: string;
+  selectable?: boolean;
+  hasRowActions?: boolean;
 };
 
 export type _QueryParamsType = {
@@ -63,5 +65,5 @@ export type QueryParamsType = {
 };
 
 export const DATA_TABLE_CONFIG_PROVIDER = new InjectionToken<DataTableConfig>(
-  'Data Table Config Provider'
+  "Data Table Config Provider"
 );
