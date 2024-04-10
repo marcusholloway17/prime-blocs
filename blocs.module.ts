@@ -29,6 +29,7 @@ import { SidebarModule } from "primeng/sidebar";
 import { DividerModule } from "primeng/divider";
 import { TooltipModule } from "primeng/tooltip";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
+import { DataTableModule } from "./data-table/data-table.module";
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { ConfirmPopupModule } from "primeng/confirmpopup";
     DividerModule,
     TooltipModule,
     ConfirmPopupModule,
+    DataTableModule,
   ],
   exports: [
     LoaderComponent,
@@ -73,6 +75,7 @@ import { ConfirmPopupModule } from "primeng/confirmpopup";
     RequestPipe,
     WithLoadingPipe,
     SafePipe,
+    DataTableModule,
   ],
 })
 export class BlocsModule {}
