@@ -31,17 +31,32 @@ import { Table } from "primeng/table";
 export class DataTableBasicComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
+  // data config
+  @Input() gridConfig: GridConfigType | Partial<GridConfigType> = {
+    page: this.dataTableConfig.page ?? 1,
+    pageSize: this.dataTableConfig.pageSize ?? 10,
+    pageSizeOptions: this.dataTableConfig.pageSizeOptions ?? [10, 50, 100],
+    totalItemLabel: this.dataTableConfig.totalItemLabel ?? "items",
+    gridSize: this.dataTableConfig.tableSize ?? DataTableSizes.md,
+    selectionMode:
+      this.dataTableConfig.selectionMode ?? DataTableSelectionMode.single,
+    dataKey: "",
+  };
+
   // data
-  public data$ = this.dataFetcher$.data$.pipe(takeUntil(this.destroy$));
+  @Input() public data$ = this.dataFetcher$.data$.pipe(
+    takeUntil(this.destroy$)
+  );
 
   // selections
-  public selected: any;
+  @Input() public selected: any;
+  @Output() public selectedChange: EventEmitter<any> = new EventEmitter<any>();
   @Output() selectionChange: EventEmitter<any> = new EventEmitter<any>();
 
   // query params
   private _queryParams: QueryParamsType = {
     page: 1,
-    pageSize: 10,
+    pageSize: this.dataTableConfig.pageSize ?? 10,
     _query: {},
   };
   public get queryParams() {
@@ -54,17 +69,6 @@ export class DataTableBasicComponent implements OnInit, OnDestroy {
 
   // data columns
   @Input() gridColumns: GridColumnType[] = [];
-
-  // data config
-  @Input() gridConfig: GridConfigType | Partial<GridConfigType> = {
-    page: this.dataTableConfig.page ?? 1,
-    pageSize: this.dataTableConfig.pageSize ?? 10,
-    pageSizeOptions: this.dataTableConfig.pageSizeOptions ?? [10, 50, 100],
-    totalItemLabel: this.dataTableConfig.totalItemLabel ?? "items",
-    gridSize: this.dataTableConfig.tableSize ?? DataTableSizes.md,
-    selectionMode:
-      this.dataTableConfig.selectionMode ?? DataTableSelectionMode.single,
-  };
 
   // url to fetch data
   @Input() set url(value: string) {
@@ -83,7 +87,9 @@ export class DataTableBasicComponent implements OnInit, OnDestroy {
 
   // templates input
   @Input() rowActionsTemplate!: TemplateRef<unknown>;
-  @Input() ActionBarTemplate!: TemplateRef<unknown>;
+  @Input() actionBarTemplate!: TemplateRef<unknown>;
+  @Input() titleTemplate!: TemplateRef<unknown>;
+  @Input() rowTemplate!: TemplateRef<unknown>;
 
   constructor(
     @Inject(DATA_TABLE_CONFIG_PROVIDER)

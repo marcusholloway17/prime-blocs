@@ -13,47 +13,82 @@
     [tableStyle]="{ 'min-width': '50rem' }"
   >
     <ng-template pTemplate="caption">
-      <div class="flex align-items-center justify-content-end">
-        <span class="p-input-icon-left ml-auto">
-          <i class="pi pi-search"></i>
-          <input
-            pInputText
-            type="text"
-            (input)="onGlobalFilter(dt1, $event)"
-            [placeholder]="'app.datagrid.search-keyword' | translate"
-          />
-        </span>
+      <div
+        [class]="
+          !titleTemplate
+            ? 'flex align-items-center justify-content-end'
+            : 'flex align-items-center justify-content-between'
+        "
+      >
+        <ng-container
+          *ngTemplateOutlet="titleTemplate; context: { $implicit: selected }"
+        >
+        </ng-container>
+
+        <div class="flex">
+          <div class="p-toolbar-group-start">
+            <ng-container
+              *ngTemplateOutlet="
+                actionBarTemplate;
+                context: { $implicit: selected }
+              "
+            >
+            </ng-container>
+          </div>
+
+          <div
+            class="p-input-icon-left ml-auto"
+            *ngIf="gridConfig.globalFilterFields?.length"
+          >
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              (input)="onGlobalFilter(dt1, $event)"
+              [placeholder]="'app.datagrid.search-keyword' | translate"
+            />
+          </div>
+        </div>
       </div>
     </ng-template>
     <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns">
-          {{ col?.title }}
-        </th>
-        <th *ngIf="gridConfig.hasRowActions">Actions</th>
-      </tr>
+      <ng-container *ngIf="gridConfig.sortable; else elseTemplate">
+        <tr>
+          <th [pSortableColumn]="col.label" *ngFor="let col of columns">
+            {{ col?.title }}
+            <p-sortIcon [field]="col.label"></p-sortIcon>
+          </th>
+          <th *ngIf="gridConfig.hasRowActions">Actions</th>
+        </tr>
+      </ng-container>
+      <ng-template #elseTemplate>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{ col?.title }}
+          </th>
+          <th *ngIf="gridConfig.hasRowActions">Actions</th>
+        </tr>
+      </ng-template>
     </ng-template>
     <ng-template pTemplate="body" let-item let-columns="columns">
-      <tr
-        *ngIf="gridConfig.selectable; else unSelectableRowTemplate"
-        [pSelectableRow]="item"
-      >
-        <td *ngFor="let col of columns">
-          {{
-            !col.transform
-              ? getProperty(item, col.label)
-              : col.transform(getProperty(item, col.label))
-          }}
-        </td>
-        <td *ngIf="gridConfig.hasRowActions">
-          <ng-container
-            *ngTemplateOutlet="rowActionsTemplate; context: { $implicit: item }"
-          >
-          </ng-container>
-        </td>
-      </tr>
-      <ng-template #unSelectableRowTemplate>
-        <tr>
+      <ng-container *ngIf="rowTemplate; else elseTemplate">
+        <ng-container
+          *ngTemplateOutlet="
+            rowTemplate;
+            context: {
+              $implicit: item,
+              columns: columns,
+              data: dataResponseType.data
+            }
+          "
+        >
+        </ng-container>
+      </ng-container>
+      <ng-template #elseTemplate>
+        <tr
+          *ngIf="gridConfig.selectable; else unSelectableRowTemplate"
+          [pSelectableRow]="item"
+        >
           <td *ngFor="let col of columns">
             {{
               !col.transform
@@ -71,6 +106,26 @@
             </ng-container>
           </td>
         </tr>
+        <ng-template #unSelectableRowTemplate>
+          <tr>
+            <td *ngFor="let col of columns">
+              {{
+                !col.transform
+                  ? getProperty(item, col.label)
+                  : col.transform(getProperty(item, col.label))
+              }}
+            </td>
+            <td *ngIf="gridConfig.hasRowActions">
+              <ng-container
+                *ngTemplateOutlet="
+                  rowActionsTemplate;
+                  context: { $implicit: item }
+                "
+              >
+              </ng-container>
+            </td>
+          </tr>
+        </ng-template>
       </ng-template>
     </ng-template>
     <ng-template pTemplate="emptymessage">
@@ -88,7 +143,7 @@
         (onPageChange)="onPageChange($event)"
         [rows]="queryParams.pageSize"
         [totalRecords]="dataResponseType.total"
-        [rowsPerPageOptions]="[10, 20, 30]"
+        [rowsPerPageOptions]="gridConfig.pageSizeOptions ?? [10, 20, 50]"
       ></p-paginator>
     </ng-template>
   </p-table>
