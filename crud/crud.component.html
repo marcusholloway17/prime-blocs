@@ -1,239 +1,141 @@
-<!-- datalist -->
-<div class="surface-card mb-3 py-2" *ngIf="data$ | async as dataResponseType">
-  <p-table
-    #dt1
-    [value]="dataResponseType.data"
-    [dataKey]="dataPrimaryKeyFieldName"
-    [loading]="loadingState.list"
-    [globalFilterFields]="gridConfig.globalFilterFields ?? []"
-    [styleClass]="setGridSize(gridConfig.gridSize)"
-    [(selection)]="selected"
-    [selectionMode]="gridConfig.selectionMode"
-    (selectionChange)="selectionChange.emit($event)"
-    (onFilter)="onFilter($event)"
-  >
-    <ng-template pTemplate="caption">
-      <div class="flex align-items-center justify-content-between">
-        <div>
-          <div class="text-3xl text-900 mb-3" *ngIf="title">
-            {{ title }}
+<ng-container *ngIf="loadingState$ | async as loadingState">
+  <!-- datalist -->
+  <div class="surface-card mb-3 py-2" *ngIf="data$ | async as dataResponseType">
+    <p-table #dt1 [value]="dataResponseType.data" [dataKey]="dataPrimaryKeyFieldName" [loading]="loadingState.list"
+      [globalFilterFields]="gridConfig.globalFilterFields ?? []" [styleClass]="setGridSize(gridConfig.gridSize)"
+      [(selection)]="selected" [selectionMode]="gridConfig.selectionMode"
+      (selectionChange)="selectionChange.emit($event)" (onFilter)="onFilter($event)">
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+          <div>
+            <div class="text-3xl text-900 mb-3" *ngIf="title">
+              {{ title }}
+            </div>
+            <div class="text-500" *ngIf="description">
+              {{ description }}
+            </div>
           </div>
-          <div class="text-500" *ngIf="description">
-            {{ description }}
-          </div>
-        </div>
 
-        <div class="flex">
-          <div class="p-toolbar-group-start">
-            <ng-content select="actionBarStart"></ng-content>
-            <p-button
-              [label]="'app.actions.refresh' | translate"
-              styleClass="p-button-sm p-button-text"
-              icon="pi pi-sync"
-              class="mr-2"
-              [loading]="loadingState.list"
-              (onClick)="refresh()"
-            ></p-button>
-            <p-button
-              [label]="'app.actions.create' | translate"
-              icon="pi pi-plus"
-              styleClass="p-button-sm p-button-text"
-              class="mr-2"
-              [loading]="loadingState.create"
-              (onClick)="itemDialog = true"
-              *ngIf="actions && hasAction('create')"
-              [disabled]="isDisabled('create')"
-            ></p-button>
-            <ng-content select="actionBarEnd"></ng-content>
-            <ng-container
-              *ngTemplateOutlet="
+          <div class="flex">
+            <div class="p-toolbar-group-start">
+              <ng-content select="actionBarStart"></ng-content>
+              <p-button [label]="'app.actions.refresh' | translate" styleClass="p-button-sm p-button-text"
+                icon="pi pi-sync" class="mr-2" [loading]="loadingState.list" (onClick)="refresh()"></p-button>
+              <p-button [label]="'app.actions.create' | translate" icon="pi pi-plus"
+                styleClass="p-button-sm p-button-text" class="mr-2" [loading]="loadingState.create"
+                (onClick)="itemDialog = true" *ngIf="actions && hasAction('create')"
+                [disabled]="isDisabled('create')"></p-button>
+              <ng-content select="actionBarEnd"></ng-content>
+              <ng-container *ngTemplateOutlet="
                 actionBarTemplate;
                 context: { $implicit: selected }
-              "
-            >
-            </ng-container>
-          </div>
-          <div
-            class="p-input-icon-right ml-auto"
-            *ngIf="
+              ">
+              </ng-container>
+            </div>
+            <div class="p-input-icon-right ml-auto" *ngIf="
               gridConfig.globalFilter && gridConfig.globalFilterFields?.length
-            "
-          >
-            <i class="pi pi-search"></i>
-            <input
-              pInputText
-              type="text"
-              (input)="onGlobalFilter(dt1, $event)"
-              [placeholder]="'app.datagrid.search-keyword' | translate"
-              class="p-inputtext-sm"
-            />
+            ">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)"
+                [placeholder]="'app.datagrid.search-keyword' | translate" class="p-inputtext-sm" />
+            </div>
           </div>
         </div>
-      </div>
-    </ng-template>
-    <ng-template pTemplate="header">
-      <tr>
-        <th
-          [pSortableColumn]="column.label"
-          style="min-width: 15rem"
-          *ngFor="let column of gridColumns"
-        >
-          {{ column.title }}
-          <p-sortIcon [field]="column.label"></p-sortIcon>
-        </th>
-        <th>Actions</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-item>
-      <tr [pSelectableRow]="gridConfig.selectable ? item : ''">
-        <td *ngFor="let column of gridColumns">
-          {{
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th [pSortableColumn]="column.label" style="min-width: 5rem" *ngFor="let column of gridColumns">
+            {{ column.title }}
+            <p-sortIcon [field]="column.label"></p-sortIcon>
+          </th>
+          <th *ngIf="rowActionsBarTemplate || hasAction('update') || hasAction('delete')">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr [pSelectableRow]="gridConfig.selectable ? item : ''">
+          <td *ngFor="let column of gridColumns">
+            {{
             !column.transform
-              ? getProperty(item, column.label)
-              : column.transform(getProperty(item, column.label))
-          }}
-        </td>
-        <td>
-          <div class="flex">
-            <p-button
-              icon="pi pi-pencil"
-              styleClass="p-button-rounded p-button-sm p-button-text mr-2"
-              (click)="editItem(item)"
-              *ngIf="actions && hasAction('update')"
-              [disabled]="isDisabled('update')"
-              [pTooltip]="'app.actions.edit' | translate"
-              tooltipPosition="bottom"
-            ></p-button>
-            <p-button
-              icon="pi pi-trash"
-              styleClass="p-button-rounded p-button-sm p-button-danger p-button-text"
-              (click)="deleteItem(item)"
-              *ngIf="actions && hasAction('delete')"
-              [disabled]="isDisabled('delete')"
-              [pTooltip]="'app.actions.delete' | translate"
-              tooltipPosition="bottom"
-            ></p-button>
-            <ng-container
-              *ngTemplateOutlet="
+            ? getProperty(item, column.label)
+            : column.transform(getProperty(item, column.label))
+            }}
+          </td>
+          <td>
+            <div class="flex">
+              <p-button icon="pi pi-pencil" styleClass="p-button-rounded p-button-sm p-button-text mr-2"
+                (click)="editItem(item)" *ngIf="actions && hasAction('update')" [disabled]="isDisabled('update')"
+                [pTooltip]="'app.actions.edit' | translate" tooltipPosition="bottom"></p-button>
+              <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-sm p-button-danger p-button-text"
+                (click)="deleteItem(item)" *ngIf="actions && hasAction('delete')" [disabled]="isDisabled('delete')"
+                [pTooltip]="'app.actions.delete' | translate" tooltipPosition="bottom"></p-button>
+              <ng-container *ngTemplateOutlet="
                 rowActionsBarTemplate;
                 context: { $implicit: item }
-              "
-            >
-            </ng-container>
-          </div>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td [attr.colspan]="gridColumns.length">
-          {{
+              ">
+              </ng-container>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="gridColumns.length">
+            {{
             "app.datagrid.emptymessage"
-              | translate : { itemLabel: gridConfig.totalItemLabel }
-          }}
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="summary">
-      <p-paginator
-        (onPageChange)="onPageChange($event)"
-        [rows]="queryParams.pageSize"
-        [totalRecords]="dataResponseType.total"
-        [rowsPerPageOptions]="gridConfig.pageSizeOption"
-      ></p-paginator>
-    </ng-template>
-  </p-table>
-</div>
-
-<!-- delete dialog -->
-<p-dialog
-  [header]="'app.actions.confirm' | translate"
-  [(visible)]="deleteItemDialog"
-  [modal]="true"
-  [style]="{ width: '450px' }"
->
-  <div class="flex align-items-center justify-content-center">
-    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-    <span *ngIf="selected"> {{ "app.prompt.delete" | translate }}</span>
+            | translate : { itemLabel: gridConfig.totalItemLabel }
+            }}
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <p-paginator (onPageChange)="onPageChange($event)" [rows]="queryParams.pageSize"
+          [totalRecords]="dataResponseType.total" [rowsPerPageOptions]="gridConfig.pageSizeOption"></p-paginator>
+      </ng-template>
+    </p-table>
   </div>
-  <ng-template pTemplate="footer">
-    <button
-      pButton
-      pRipple
-      class="p-button-text"
-      [label]="'app.actions.cancel' | translate"
-      (click)="deleteItemDialog = false"
-    ></button>
-    <button
-      pButton
-      pRipple
-      class="p-button-text p-button-danger"
-      [label]="'app.actions.delete' | translate"
-      [loading]="loadingState.delete"
-      (click)="confirmDelete()"
-    ></button>
-  </ng-template>
-</p-dialog>
 
-<!-- form dialog -->
-<p-dialog
-  [(visible)]="itemDialog"
-  [style]="{ width: '550px' }"
-  [modal]="true"
-  [dismissableMask]="true"
-  [maximizable]="true"
-  (onHide)="onItemDialogHide()"
-  class="p-fluid"
->
-  <ng-template pTemplate="header">
-    <h3>{{ gridConfig.totalItemLabel }}</h3>
-  </ng-template>
-
-  <ng-template pTemplate="content">
-    <ng-container *ngIf="form$ | async as vm">
-      <ngx-smart-form
-        #form
-        [form]="vm"
-        [submitable]="false"
-        [autoSubmit]="false"
-        [autofocus]="false"
-        (submit)="saveItem($event)"
-        (ready)="onFormReadyState($event)"
-        [template]="controlTemplate"
-      >
-        <div [class]="'formgrid grid'">
-          <ng-template
-            #controlTemplate
-            let-config="value"
-            let-control="control"
-          >
-            <ngx-prime-form-control
-              [control]="control"
-              [inputconfig]="config"
-            ></ngx-prime-form-control>
-          </ng-template>
-        </div>
-      </ngx-smart-form>
-    </ng-container>
-  </ng-template>
-
-  <ng-template pTemplate="footer">
-    <div class="flex justify-content-end">
-      <button
-        pButton
-        pRipple
-        [label]="'app.actions.cancel' | translate"
-        class="p-button-text p-button-danger"
-        (click)="hideDialog()"
-      ></button>
-      <button
-        pButton
-        pRipple
-        [label]="'app.actions.save' | translate"
-        class="p-button-text"
-        (click)="saveItem()"
-        [loading]="!!selected ? loadingState.update : loadingState.create"
-      ></button>
+  <!-- delete dialog -->
+  <p-dialog [header]="'app.actions.confirm' | translate" [(visible)]="deleteItemDialog" [modal]="true"
+    [style]="{ width: '450px' }">
+    <div class="flex align-items-center justify-content-center">
+      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+      <span *ngIf="selected"> {{ "app.prompt.delete" | translate }}</span>
     </div>
-  </ng-template>
-</p-dialog>
+    <ng-template pTemplate="footer">
+      <button pButton pRipple class="p-button-text" [label]="'app.actions.cancel' | translate"
+        (click)="deleteItemDialog = false"></button>
+      <button pButton pRipple class="p-button-text p-button-danger" [label]="'app.actions.delete' | translate"
+        [loading]="loadingState.delete" (click)="confirmDelete()"></button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- form dialog -->
+  <p-dialog [(visible)]="itemDialog" [style]="{ width: '550px' }" [modal]="true" [dismissableMask]="true"
+    [maximizable]="true" (onHide)="onItemDialogHide()" class="p-fluid">
+    <ng-template pTemplate="header">
+      <h3>{{ gridConfig.totalItemLabel }}</h3>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+      <ng-container *ngIf="form$ | async as vm">
+        <ngx-smart-form #form [form]="vm" [submitable]="false" [autoSubmit]="false" [autofocus]="false"
+          (submit)="saveItem($event)" (ready)="onFormReadyState($event)" [template]="controlTemplate">
+          <div [class]="'formgrid grid'">
+            <ng-template #controlTemplate let-config="value" let-control="control">
+              <ngx-prime-form-control [control]="control" [inputconfig]="config"></ngx-prime-form-control>
+            </ng-template>
+          </div>
+        </ngx-smart-form>
+      </ng-container>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <div class="flex justify-content-end">
+        <button pButton pRipple [label]="'app.actions.cancel' | translate" class="p-button-text p-button-danger"
+          (click)="hideDialog()"></button>
+        <button pButton pRipple [label]="'app.actions.save' | translate" class="p-button-text" (click)="saveItem()"
+          [loading]="selected ? loadingState.update : loadingState.create"></button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</ng-container>

@@ -60,7 +60,7 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   @Input() dataPrimaryKeyFieldName: string = "id";
 
   // loading state
-  public loadingState!: CrudLoadingState;
+  public loadingState$ = this.crudService.loadingState$;
 
   // data
   public data$ = this.crudService.data$.pipe(takeUntil(this.destroy$));
@@ -157,7 +157,7 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
 
   ngOnInit(): void {
     this.refresh();
-    this.handleLoadingState();
+    // this.handleLoadingState();
   }
 
   ngAfterContentInit(): void {
@@ -224,14 +224,14 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
     );
   }
 
-  handleLoadingState() {
-    this.crudService.loadingState$
-      .pipe(
-        takeUntil(this.destroy$),
-        tap((state) => (this.loadingState = state))
-      )
-      .subscribe();
-  }
+  // handleLoadingState() {
+  //   this.crudService.loadingState$
+  //     .pipe(
+  //       takeUntil(this.destroy$),
+  //       tap((state) => (this.loadingState = state))
+  //     )
+  //     .subscribe();
+  // }
 
   refresh() {
     this.crudService
@@ -248,6 +248,7 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
 
   // save item
   saveItem(value: any = this.formvalue?.formGroup?.getRawValue()) {
+    this.formvalue?.validateForm();
     if (this.selected) {
       this.crudService
         .update(
