@@ -30,6 +30,8 @@ import { DividerModule } from "primeng/divider";
 import { TooltipModule } from "primeng/tooltip";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
 import { DataTableModule } from "./data-table/data-table.module";
+import { ChartComponent } from "./chart/chart.component";
+import { ChartjsModule } from "@ctrl/ngx-chartjs";
 
 @NgModule({
   declarations: [
@@ -39,6 +41,7 @@ import { DataTableModule } from "./data-table/data-table.module";
     WithLoadingPipe,
     SafePipe,
     PrimeFormControlComponent,
+    ChartComponent,
   ],
   imports: [
     CommonModule,
@@ -67,6 +70,7 @@ import { DataTableModule } from "./data-table/data-table.module";
     TooltipModule,
     ConfirmPopupModule,
     DataTableModule,
+    ChartjsModule,
   ],
   exports: [
     LoaderComponent,
@@ -76,6 +80,7 @@ import { DataTableModule } from "./data-table/data-table.module";
     WithLoadingPipe,
     SafePipe,
     DataTableModule,
+    ChartComponent,
   ],
 })
 export class BlocsModule {}
