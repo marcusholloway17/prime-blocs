@@ -3,7 +3,7 @@
   <div *ngIf="data$ | async as dataResponseType">
     <p-table #dt1 [value]="dataResponseType.data" [dataKey]="dataPrimaryKeyFieldName" [loading]="loadingState.list"
       [globalFilterFields]="gridConfig.globalFilterFields ?? []" [styleClass]="setGridSize(gridConfig.gridSize)"
-      [(selection)]="selected" [selectionMode]="gridConfig.selectionMode"
+      [(selection)]="selected" [selectionMode]="gridConfig.selectionMode" [scrollable]="true" scrollHeight="80vh"
       (selectionChange)="selectionChange.emit($event)" (onFilter)="onFilter($event)">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between py-3">
