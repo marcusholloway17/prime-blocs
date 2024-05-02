@@ -1,17 +1,17 @@
 <ng-container *ngIf="loadingState$ | async as loadingState">
   <!-- datalist -->
-  <div class="surface-card mb-3 py-2" *ngIf="data$ | async as dataResponseType">
+  <div *ngIf="data$ | async as dataResponseType">
     <p-table #dt1 [value]="dataResponseType.data" [dataKey]="dataPrimaryKeyFieldName" [loading]="loadingState.list"
       [globalFilterFields]="gridConfig.globalFilterFields ?? []" [styleClass]="setGridSize(gridConfig.gridSize)"
       [(selection)]="selected" [selectionMode]="gridConfig.selectionMode"
       (selectionChange)="selectionChange.emit($event)" (onFilter)="onFilter($event)">
       <ng-template pTemplate="caption">
-        <div class="flex align-items-center justify-content-between">
+        <div class="flex align-items-center justify-content-between py-3">
           <div>
-            <div class="text-3xl text-900 mb-3" *ngIf="title">
+            <div class="text-3xl font-medium text-900 mb-2" *ngIf="title">
               {{ title }}
             </div>
-            <div class="text-500" *ngIf="description">
+            <div class="font-medium text-500 mb-3" *ngIf="description">
               {{ description }}
             </div>
           </div>
