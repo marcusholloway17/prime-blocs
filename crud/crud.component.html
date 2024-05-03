@@ -4,7 +4,8 @@
     <p-table #dt1 [value]="dataResponseType.data" [dataKey]="dataPrimaryKeyFieldName" [loading]="loadingState.list"
       [globalFilterFields]="gridConfig.globalFilterFields ?? []" [styleClass]="setGridSize(gridConfig.gridSize)"
       [(selection)]="selected" [selectionMode]="gridConfig.selectionMode" [scrollable]="true" scrollHeight="80vh"
-      (selectionChange)="selectionChange.emit($event)" (onFilter)="onFilter($event)">
+      responsiveLayout="stack" [breakpoint]="'960px'" (selectionChange)="selectionChange.emit($event)"
+      (onFilter)="onFilter($event)" [tableStyle]="{'min-width': '25rem'}">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between py-3">
           <div>
@@ -54,6 +55,9 @@
       <ng-template pTemplate="body" let-item>
         <tr [pSelectableRow]="gridConfig.selectable ? item : ''">
           <td *ngFor="let column of gridColumns">
+            <span class="p-column-title">
+              {{column.label}}
+            </span>
             {{
             !column.transform
             ? getProperty(item, column.label)
