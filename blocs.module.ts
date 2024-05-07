@@ -31,7 +31,6 @@ import { TooltipModule } from "primeng/tooltip";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
 import { DataTableModule } from "./data-table/data-table.module";
 import { ChartComponent } from "./chart/chart.component";
-import { ChartjsModule } from "@ctrl/ngx-chartjs";
 
 @NgModule({
   declarations: [
@@ -70,7 +69,6 @@ import { ChartjsModule } from "@ctrl/ngx-chartjs";
     TooltipModule,
     ConfirmPopupModule,
     DataTableModule,
-    ChartjsModule,
   ],
   exports: [
     LoaderComponent,
