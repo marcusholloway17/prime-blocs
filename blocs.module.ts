@@ -30,7 +30,6 @@ import { DividerModule } from "primeng/divider";
 import { TooltipModule } from "primeng/tooltip";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
 import { DataTableModule } from "./data-table/data-table.module";
-import { ChartComponent } from "./chart/chart.component";
 
 @NgModule({
   declarations: [
@@ -40,7 +39,6 @@ import { ChartComponent } from "./chart/chart.component";
     WithLoadingPipe,
     SafePipe,
     PrimeFormControlComponent,
-    ChartComponent,
   ],
   imports: [
     CommonModule,
@@ -78,7 +76,6 @@ import { ChartComponent } from "./chart/chart.component";
     WithLoadingPipe,
     SafePipe,
     DataTableModule,
-    ChartComponent,
   ],
 })
 export class BlocsModule {}
