@@ -114,7 +114,7 @@
   </p-dialog>
 
   <!-- form dialog -->
-  <p-dialog [(visible)]="itemDialog" [style]="{ width: '550px' }" [modal]="true" [dismissableMask]="true"
+  <p-dialog [(visible)]="itemDialog" [style]="{ 'min-width': '550px' }" [modal]="true" [dismissableMask]="true"
     [maximizable]="true" (onHide)="onItemDialogHide()" class="p-fluid">
     <ng-template pTemplate="header">
       <h3>{{ gridConfig.totalItemLabel }}</h3>
