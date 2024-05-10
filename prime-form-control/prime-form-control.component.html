@@ -1,151 +1,80 @@
 <div>
   <div>
-    <label [for]="inputconfig.name" class="block text-900 font-medium mb-2"
-      >{{ inputconfig.label }}
-      <span
-        *ngIf="inputconfig.rules?.isRequired == true"
-        [style]="{ color: 'red' }"
-        class=""
-        >*</span
-      >
+    <label [for]="inputconfig.name" class="block text-900 font-medium mb-2">{{ inputconfig.label }}
+      <span *ngIf="inputconfig.rules?.isRequired == true" [style]="{ color: 'red' }" class="">*</span>
     </label>
     <ng-container [ngSwitch]="inputconfig.type">
       <!-- text input type -->
       <ng-container *ngSwitchCase="inputTypes.TEXT_INPUT">
-        <ng-container
-          *ngIf="inputType.asTextInput(inputconfig) as textInputConfig"
-        >
-          <input
-            *ngIf="textInputConfig"
-            [id]="textInputConfig.name"
-            [hidden]="textInputConfig.hidden"
-            [formControl]="control"
-            type="text"
-            pInputText
-          />
+        <ng-container *ngIf="inputType.asTextInput(inputconfig) as textInputConfig">
+          <input *ngIf="textInputConfig" [id]="textInputConfig.name" [hidden]="textInputConfig.hidden"
+            [formControl]="control" type="text" pInputText />
         </ng-container>
       </ng-container>
 
       <!-- email input type -->
       <ng-container *ngSwitchCase="inputTypes.EMAIL_INPUT">
-        <ng-container
-          *ngIf="inputType.asTextInput(inputconfig) as emailInputConfig"
-        >
-          <input
-            *ngIf="emailInputConfig"
-            [id]="emailInputConfig.name"
-            [hidden]="emailInputConfig.hidden"
-            [formControl]="control"
-            type="email"
-            pInputText
-          />
+        <ng-container *ngIf="inputType.asTextInput(inputconfig) as emailInputConfig">
+          <input *ngIf="emailInputConfig" [id]="emailInputConfig.name" [hidden]="emailInputConfig.hidden"
+            [formControl]="control" type="email" pInputText />
         </ng-container>
       </ng-container>
 
       <!-- phone input type -->
       <ng-container *ngSwitchCase="inputTypes.PHONE_INPUT">
-        <ng-container
-          *ngIf="inputType.asTextInput(inputconfig) as phoneInputConfig"
-        >
-          <p-inputMask
-            [id]="phoneInputConfig.name"
-            [hidden]="phoneInputConfig.hidden"
-            [formControl]="control"
-            mask="+99999999999"
-            placeholder="+22890010203"
-          ></p-inputMask>
+        <ng-container *ngIf="inputType.asTextInput(inputconfig) as phoneInputConfig">
+          <p-inputMask [id]="phoneInputConfig.name" [hidden]="phoneInputConfig.hidden" [formControl]="control"
+            mask="+99999999999" placeholder="+22890010203"></p-inputMask>
         </ng-container>
       </ng-container>
 
       <!-- textarea input type -->
       <ng-container *ngSwitchCase="inputTypes.TEXTAREA_INPUT">
-        <ng-container
-          *ngIf="inputType.asTextAreaInput(inputconfig) as textareaInputConfig"
-        >
-          <textarea
-            rows="5"
-            pInputTextarea
-            [formControl]="control"
-            [style]="{ width: '100%' }"
-          ></textarea>
+        <ng-container *ngIf="inputType.asTextAreaInput(inputconfig) as textareaInputConfig">
+          <textarea rows="5" pInputTextarea [formControl]="control" [style]="{ width: '100%' }"></textarea>
         </ng-container>
       </ng-container>
 
       <!-- html input type -->
       <ng-container *ngSwitchCase="inputTypes.HTML_INPUT">
-        <ng-container
-          *ngIf="inputType.asTextAreaInput(inputconfig) as htmlInputConfig"
-        >
-          <p-editor
-            [formControl]="control"
-            [readonly]="htmlInputConfig.readOnly ?? false"
-            [style]="{ height: '150px' }"
-          ></p-editor>
+        <ng-container *ngIf="inputType.asTextAreaInput(inputconfig) as htmlInputConfig">
+          <p-editor [formControl]="control" [readonly]="htmlInputConfig.readOnly ?? false"
+            [style]="{ height: '150px' }"></p-editor>
         </ng-container>
       </ng-container>
 
       <!-- select input type -->
       <ng-container *ngSwitchCase="inputTypes.SELECT_INPUT">
-        <ng-container
-          *ngIf="inputType.asSelectInput(inputconfig) as selectInputConfig"
-        >
-          <ng-container
-            *ngIf="
+        <ng-container *ngIf="inputType.asSelectInput(inputconfig) as selectInputConfig">
+          <ng-container *ngIf="
               !!selectInputConfig.optionsConfig?.source?.raw?.includes('http');
               else selectElseTemplate
-            "
-          >
-            <ng-container
-              *ngIf="
+            ">
+            <ng-container *ngIf="
                 ''
                   | request : selectInputConfig.optionsConfig?.source?.raw ?? ''
                   | withLoading
                   | async as optionsData
-              "
-            >
-              <p-dropdown
-                [formControl]="control"
-                [options]="optionsData?.value?.data ?? []"
-                [optionLabel]="
+              ">
+              <p-dropdown [formControl]="control" [options]="optionsData?.value?.data ?? []" [optionLabel]="
                   selectInputConfig.optionsConfig?.params?.valueBy ?? ''
-                "
-                [optionValue]="
+                " [optionValue]="
                   selectInputConfig.optionsConfig?.params?.keyBy ?? ''
-                "
-                [filter]="true"
-                [filterBy]="
+                " [filter]="true" [filterBy]="
                   selectInputConfig.optionsConfig?.params?.valueBy || ''
-                "
-                appendTo="body"
-                [autoDisplayFirst]="false"
-              >
+                " appendTo="body" [showClear]="true" [autoDisplayFirst]="false">
                 <ng-template pTemplate="dropdownicon">
-                  <i
-                    *ngIf="optionsData?.loading"
-                    class="pi pi-spin pi-spinner"
-                    style="font-size: 2rem"
-                  ></i>
+                  <i *ngIf="optionsData?.loading" class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
                 </ng-template>
               </p-dropdown>
             </ng-container>
           </ng-container>
           <ng-template #selectElseTemplate>
-            <div
-              *ngIf="inputType.asSelectInput(inputconfig) as selectInputConfig"
-            >
-              <p-dropdown
-                *ngIf="selectInputConfig.optionsConfig"
-                [formControl]="control"
-                [options]="
+            <div *ngIf="inputType.asSelectInput(inputconfig) as selectInputConfig">
+              <p-dropdown *ngIf="selectInputConfig.optionsConfig" [formControl]="control" [options]="
                   mapSelectionResource(selectInputConfig.optionsConfig)
-                "
-                [optionLabel]="'value'"
-                [optionValue]="'key'"
-                [filter]="true"
-                [filterBy]="'value'"
-                [autoDisplayFirst]="false"
-                appendTo="body"
-              >
+                " [optionLabel]="'value'" [optionValue]="'key'" [filter]="true" [filterBy]="'value'" [showClear]="true"
+                [autoDisplayFirst]="false" appendTo="body">
               </p-dropdown>
             </div>
             <!-- <pre>
@@ -158,106 +87,59 @@
 
       <!-- date input type -->
       <ng-container *ngSwitchCase="inputTypes.DATE_INPUT">
-        <ng-container
-          *ngIf="inputType.asDateInput(inputconfig) as dateInputConfig"
-        >
-          <ng-container
-            *ngIf="
+        <ng-container *ngIf="inputType.asDateInput(inputconfig) as dateInputConfig">
+          <ng-container *ngIf="
               dateInputConfig?.minDate || dateInputConfig.maxDate;
               else dateElseTemplate
-            "
-          >
-            <p-calendar
-              [showIcon]="true"
-              [showButtonBar]="true"
-              [inputId]="dateInputConfig.name"
-              [dateFormat]="'yy-mm-dd'"
-              [minDate]="toDate(dateInputConfig.minDate)"
-              [maxDate]="toDate(dateInputConfig.maxDate)"
-              [readonlyInput]="true"
-              [formControl]="control"
-              appendTo="body"
-            ></p-calendar>
+            ">
+            <p-calendar [showIcon]="true" [showButtonBar]="true" [inputId]="dateInputConfig.name"
+              [dateFormat]="'yy-mm-dd'" [minDate]="toDate(dateInputConfig.minDate)"
+              [maxDate]="toDate(dateInputConfig.maxDate)" [readonlyInput]="true" [formControl]="control"
+              appendTo="body"></p-calendar>
           </ng-container>
           <ng-template #dateElseTemplate>
-            <p-calendar
-              [showIcon]="true"
-              [showButtonBar]="true"
-              [inputId]="dateInputConfig.name"
-              [dateFormat]="'yy-mm-dd'"
-              [readonlyInput]="true"
-              [formControl]="control"
-              appendTo="body"
-            ></p-calendar>
+            <p-calendar [showIcon]="true" [showButtonBar]="true" [inputId]="dateInputConfig.name"
+              [dateFormat]="'yy-mm-dd'" [readonlyInput]="true" [formControl]="control" appendTo="body"></p-calendar>
           </ng-template>
         </ng-container>
       </ng-container>
 
       <!-- time input type -->
       <ng-container *ngSwitchCase="inputTypes.TIME_INPUT">
-        <ng-container
-          *ngIf="inputType.asDateInput(inputconfig) as timeInputConfig"
-        >
-          <p-calendar
-            [timeOnly]="true"
-            [inputId]="timeInputConfig.name"
-            [formControl]="control"
-            appendTo="body"
-          ></p-calendar>
+        <ng-container *ngIf="inputType.asDateInput(inputconfig) as timeInputConfig">
+          <p-calendar [timeOnly]="true" [inputId]="timeInputConfig.name" [formControl]="control"
+            appendTo="body"></p-calendar>
         </ng-container>
       </ng-container>
 
       <!-- password input type -->
       <ng-container *ngSwitchCase="inputTypes.PASSWORD_INPUT">
-        <ng-container
-          *ngIf="inputType.asPasswordInput(inputconfig) as passwordInputConfig"
-        >
-          <p-password
-            [id]="passwordInputConfig.name"
-            type="password"
-            [formControl]="control"
-            [toggleMask]="true"
-          ></p-password>
+        <ng-container *ngIf="inputType.asPasswordInput(inputconfig) as passwordInputConfig">
+          <p-password [id]="passwordInputConfig.name" type="password" [formControl]="control"
+            [toggleMask]="true"></p-password>
         </ng-container>
       </ng-container>
 
       <!-- number input type -->
       <ng-container *ngSwitchCase="inputTypes.NUMBER_INPUT">
-        <ng-container
-          *ngIf="inputType.asNumberInput(inputconfig) as numberInputConfig"
-        >
-          <p-inputNumber
-            [inputId]="numberInputConfig.name"
-            [mode]="'decimal'"
-            [showButtons]="true"
-            [useGrouping]="false"
-            [min]="numberInputConfig.min || 0"
-            [max]="numberInputConfig.max ?? 1000000000000"
-            [formControl]="control"
-          ></p-inputNumber>
+        <ng-container *ngIf="inputType.asNumberInput(inputconfig) as numberInputConfig">
+          <p-inputNumber [inputId]="numberInputConfig.name" [mode]="'decimal'" [showButtons]="true"
+            [useGrouping]="false" [min]="numberInputConfig.min || 0" [max]="numberInputConfig.max ?? 1000000000000"
+            [formControl]="control"></p-inputNumber>
         </ng-container>
       </ng-container>
 
       <!-- radio input type -->
       <ng-container *ngSwitchCase="inputTypes.RADIO_INPUT">
-        <ng-container
-          *ngIf="inputType.asRadioInput(inputconfig) as radioInputConfig"
-        >
+        <ng-container *ngIf="inputType.asRadioInput(inputconfig) as radioInputConfig">
           <div class="flex flex-wrap gap-3">
-            <div
-              class="flex align-items-center"
-              *ngFor="
+            <div class="flex align-items-center" *ngFor="
                 let item of parseSource(
                   radioInputConfig.optionsConfig?.source?.raw ?? ''
                 ) ?? []
-              "
-            >
-              <p-radioButton
-                [name]="item?.label ?? ''"
-                [value]="item?.key ?? ''"
-                [formControl]="control"
-                [inputId]="radioInputConfig.optionsConfig?.params?.keyBy ?? ''"
-              ></p-radioButton>
+              ">
+              <p-radioButton [name]="item?.label ?? ''" [value]="item?.key ?? ''" [formControl]="control"
+                [inputId]="radioInputConfig.optionsConfig?.params?.keyBy ?? ''"></p-radioButton>
               <label for="ingredient1" class="ml-2">{{ item?.label }}</label>
             </div>
           </div>
@@ -266,6 +148,6 @@
     </ng-container>
     <small *ngIf="inputconfig.description" [id]="inputconfig.name">{{
       inputconfig.description
-    }}</small>
+      }}</small>
   </div>
 </div>
