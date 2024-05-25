@@ -134,12 +134,10 @@
     </ng-template>
 
     <ng-template pTemplate="footer">
-      <div class="flex justify-content-end">
-        <button pButton pRipple [label]="'app.actions.cancel' | translate" class="p-button-text p-button-danger"
-          (click)="hideDialog()"></button>
-        <button pButton pRipple [label]="'app.actions.save' | translate" class="p-button-text" (click)="saveItem()"
-          [loading]="selected ? loadingState.update : loadingState.create"></button>
-      </div>
+      <p-button (click)="hideDialog()" [label]="'app.actions.cancel' | translate"
+        styleClass="p-button-text p-button-danger"></p-button>
+      <p-button (click)="saveItem()" [label]="'app.actions.save' | translate" styleClass="p-button-text"
+        [loading]="selected ? loadingState.update : loadingState.create"></p-button>
     </ng-template>
   </p-dialog>
 </ng-container>
