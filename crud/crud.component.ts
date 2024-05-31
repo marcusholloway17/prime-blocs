@@ -28,6 +28,8 @@ import {
   ReactiveFormComponentInterface,
 } from "@azlabsjs/ngx-smart-form";
 import { ScopeService } from "./services/scope.service";
+import { ConfirmationService } from "primeng/api";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: "prime-crud",
@@ -54,6 +56,9 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   @Input() set url(value: string) {
     this.crudService.setUrl(value);
   }
+
+  // save or update confirm popup handler
+  @Input() useConfirmationPopup: boolean = true;
 
   // CRUD element config
   @Input() dataPrimaryKeyFieldName: string = "id";
@@ -151,6 +156,8 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   constructor(
     private crudService: CrudService,
     private scopeService: ScopeService,
+    private confirmationService: ConfirmationService,
+    private translateService: TranslateService,
     @Inject(FORM_CLIENT) private formsClient: FormsClient
   ) {}
 
@@ -246,39 +253,88 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   onFormReadyState(event: any) {}
 
   // save item
-  saveItem(value: any = this.formvalue?.formGroup?.getRawValue()) {
+  saveItem(
+    event: Event,
+    value: any = this.formvalue?.formGroup?.getRawValue()
+  ) {
     this.formvalue?.validateForm();
-    if (this.selected) {
-      this.crudService
-        .update(
-          this.selected[this.dataPrimaryKeyFieldName],
-          this.hooks.beforeSubmit(value)
-        )
-        .pipe(
-          takeUntil(this.destroy$),
-          tap((result) => {
-            if (result) {
-              this.onUpdate.emit(value);
-              this.selected = undefined;
-              this.formvalue?.reset();
+
+    if (this.useConfirmationPopup) {
+      if (event?.target)
+        this.confirmationService.confirm({
+          target: event?.target,
+          message: this.translateService.instant("app.prompt.proceed"),
+          icon: "pi pi-exclamation-triangle",
+          acceptLabel: this.translateService.instant("app.strings.yes"),
+          rejectLabel: this.translateService.instant("app.strings.no"),
+          accept: () => {
+            if (this.selected) {
+              this.crudService
+                .update(
+                  this.selected[this.dataPrimaryKeyFieldName],
+                  this.hooks.beforeSubmit(value)
+                )
+                .pipe(
+                  takeUntil(this.destroy$),
+                  tap((result) => {
+                    if (result) {
+                      this.onUpdate.emit(value);
+                      this.selected = undefined;
+                      this.formvalue?.reset();
+                    }
+                  })
+                )
+                .subscribe();
+            } else {
+              this.crudService
+                .create(this.hooks.beforeSubmit(value))
+                .pipe(
+                  takeUntil(this.destroy$),
+                  tap((result) => {
+                    if (result) {
+                      this.onCreate.emit(value);
+                      this.selected = undefined;
+                      this.formvalue?.reset();
+                    }
+                  })
+                )
+                .subscribe();
             }
-          })
-        )
-        .subscribe();
+          },
+        });
     } else {
-      this.crudService
-        .create(this.hooks.beforeSubmit(value))
-        .pipe(
-          takeUntil(this.destroy$),
-          tap((result) => {
-            if (result) {
-              this.onCreate.emit(value);
-              this.selected = undefined;
-              this.formvalue?.reset();
-            }
-          })
-        )
-        .subscribe();
+      if (this.selected) {
+        this.crudService
+          .update(
+            this.selected[this.dataPrimaryKeyFieldName],
+            this.hooks.beforeSubmit(value)
+          )
+          .pipe(
+            takeUntil(this.destroy$),
+            tap((result) => {
+              if (result) {
+                this.onUpdate.emit(value);
+                this.selected = undefined;
+                this.formvalue?.reset();
+              }
+            })
+          )
+          .subscribe();
+      } else {
+        this.crudService
+          .create(this.hooks.beforeSubmit(value))
+          .pipe(
+            takeUntil(this.destroy$),
+            tap((result) => {
+              if (result) {
+                this.onCreate.emit(value);
+                this.selected = undefined;
+                this.formvalue?.reset();
+              }
+            })
+          )
+          .subscribe();
+      }
     }
   }
 

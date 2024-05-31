@@ -123,7 +123,7 @@
     <ng-template pTemplate="content">
       <ng-container *ngIf="form$ | async as vm">
         <ngx-smart-form #form [form]="vm" [submitable]="false" [autoSubmit]="false" [autofocus]="false"
-          (submit)="saveItem($event)" (ready)="onFormReadyState($event)" [template]="controlTemplate">
+          (ready)="onFormReadyState($event)" [template]="controlTemplate">
           <div [class]="'formgrid grid'">
             <ng-template #controlTemplate let-config="value" let-control="control">
               <ngx-prime-form-control [control]="control" [inputconfig]="config"></ngx-prime-form-control>
@@ -137,8 +137,9 @@
       <div class="flex justify-content-end">
         <button pButton pRipple [label]="'app.actions.cancel' | translate" class="p-button-text p-button-danger"
           (click)="hideDialog()"></button>
-        <button pButton pRipple [label]="'app.actions.save' | translate" class="p-button-text" (click)="saveItem()"
-          [loading]="selected ? loadingState.update : loadingState.create"></button>
+        <button *ngIf="this.formvalue" pButton pRipple [label]="'app.actions.save' | translate" class="p-button-text"
+          (click)="saveItem($event)" [loading]="selected ? loadingState.update : loadingState.create"
+          [disabled]="!this.formvalue.formGroup.valid"></button>
       </div>
     </ng-template>
   </p-dialog>
