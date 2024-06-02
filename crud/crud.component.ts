@@ -27,7 +27,6 @@ import {
   FormsClient,
   ReactiveFormComponentInterface,
 } from "@azlabsjs/ngx-smart-form";
-import { ScopeService } from "./services/scope.service";
 import { ConfirmationService } from "primeng/api";
 import { TranslateService } from "@ngx-translate/core";
 
@@ -131,7 +130,7 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
   };
 
   // scopes handler
-  public scopes = this.scopeService.getScopes();
+  public scopes = [];
 
   // events emitters
   @Output() lazyLoad: EventEmitter<any> = new EventEmitter<any>();
@@ -155,7 +154,6 @@ export class CrudComponent implements OnInit, AfterContentInit, OnDestroy {
 
   constructor(
     private crudService: CrudService,
-    private scopeService: ScopeService,
     private confirmationService: ConfirmationService,
     private translateService: TranslateService,
     @Inject(FORM_CLIENT) private formsClient: FormsClient
