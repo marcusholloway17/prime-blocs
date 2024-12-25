@@ -30,6 +30,7 @@ import { DividerModule } from "primeng/divider";
 import { TooltipModule } from "primeng/tooltip";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
 import { DataTableModule } from "./data-table/data-table.module";
+import { CheckboxModule } from "primeng/checkbox";
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { DataTableModule } from "./data-table/data-table.module";
     TooltipModule,
     ConfirmPopupModule,
     DataTableModule,
+    CheckboxModule
   ],
   exports: [
     LoaderComponent,
@@ -78,4 +80,4 @@ import { DataTableModule } from "./data-table/data-table.module";
     DataTableModule,
   ],
 })
-export class BlocsModule {}
+export class BlocsModule { }

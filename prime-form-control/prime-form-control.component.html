@@ -123,8 +123,8 @@
       <!-- number input type -->
       <ng-container *ngSwitchCase="inputTypes.NUMBER_INPUT">
         <ng-container *ngIf="inputType.asNumberInput(inputconfig) as numberInputConfig">
-          <p-inputNumber [inputId]="numberInputConfig.name" [mode]="'decimal'" [showButtons]="true"
-            [useGrouping]="false" [min]="numberInputConfig.min || 0" [max]="numberInputConfig.max ?? 1000000000000"
+          <p-inputNumber [inputId]="numberInputConfig.name" [mode]="'decimal'" [useGrouping]="false"
+            [min]="numberInputConfig.min || 0" [max]="numberInputConfig.max ?? 1000000000000"
             [formControl]="control"></p-inputNumber>
         </ng-container>
       </ng-container>
@@ -141,6 +141,18 @@
               <p-radioButton [name]="item?.label ?? ''" [value]="item?.key ?? ''" [formControl]="control"
                 [inputId]="radioInputConfig.optionsConfig?.params?.keyBy ?? ''"></p-radioButton>
               <label for="ingredient1" class="ml-2">{{ item?.label }}</label>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <!-- checkbox input type -->
+      <ng-container *ngSwitchCase="inputTypes.CHECKBOX_INPUT">
+        <ng-container *ngIf="inputType.asRadioInput(inputconfig) as radioInputConfig">
+          <div class="flex flex-wrap gap-3">
+            <div class="flex align-items-center">
+              <p-checkbox [formControl]="control" [name]="radioInputConfig.name" [value]="radioInputConfig.value"
+                [binary]="true" [inputId]="radioInputConfig.optionsConfig?.params?.keyBy ?? ''" />
             </div>
           </div>
         </ng-container>
